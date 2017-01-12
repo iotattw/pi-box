@@ -1,4 +1,4 @@
 #!/bin/sh
-IMG_DIR=`./truncate-extension.sh $1`
+IMG_DIR=/mnt/`./truncate-extension.sh $1`
 
-umount /mnt/$IMG_DIR
+umount $IMG_DIR

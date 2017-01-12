@@ -1,5 +1,7 @@
 #!/bin/sh
-IMG_DIR=`./truncate-extension.sh $1`
+IMG_DIR=/mnt/`./truncate-extension.sh $1`
 
-./comment.sh libarmmem /mnt/$IMG_DIR/etc/ld.so.preload
-sed -i 's/\/dev\/mmcblk0p/\/dev\/sda/' /mnt/$IMG_DIR/etc/fstab
+./comment.sh libarmmem $IMG_DIR/etc/ld.so.preload
+echo "KERNEL==\"sda\", SYMLINK+=\"mmcblk0\"" > $IMG_DIR/etc/udev/rules.d/90-qemu.rules
+echo "KERNEL==\"sda?\", SYMLINK+=\"mmcblk0p%n\"" >> $IMG_DIR/etc/udev/rules.d/90-qemu.rules
+echo "KERNEL==\"sda2\", SYMLINK+=\"root\"" >> $IMG_DIR/etc/udev/rules.d/90-qemu.rules

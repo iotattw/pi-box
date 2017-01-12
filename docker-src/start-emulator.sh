@@ -9,7 +9,7 @@ qemu-system-arm \
 	-M versatilepb \
 	-no-reboot \
 	-append  "root=/dev/sda2 panic=1 rootfstype=ext4 rw console=ttyAMA0,115200" \
-	-hda $IMG_FILE \
+	-drive "file=$IMG_FILE,index=0,media=disk,format=raw" \
 	-nographic \
 	-redir tcp:2222::22
 #-append  "rw earlyprintk loglevel=8 console=ttyAMA0,115200 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2" \

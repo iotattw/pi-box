@@ -3,7 +3,7 @@ IMG_DIR=$1
 INIT_DIR=$IMG_DIR/etc/pi-init
 INIT_SCRIPT=pi-init-scripts.sh
 
-mkdir $INIT_DIR 2>/dev/null
+mkdir -p $INIT_DIR
 cp /src/init/* $INIT_DIR
 
 cp pi-init-scripts.sh $IMG_DIR/etc/init.d/$INIT_SCRIPT

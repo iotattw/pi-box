@@ -1,12 +1,17 @@
 #!/bin/sh
 IMG_FILE=raspbian.img
+IMG_DIR=/mnt/`./truncate-extension.sh $1`
 
-./mount-image.sh $IMG_FILE
-./prepare-image-for-emulation.sh $IMG_FILE
-./unmount-image.sh $IMG_FILE
+find . -name "*.sh" | xargs chmod u+x
+
+./mount-image.sh $IMG_FILE $IMG_DIR
+./prepare-image-for-emulation.sh $IMG_DIR
+./load-init-scripts.sh $IMG_DIR
+./unmount-image.sh $IMG_DIR
 
 ./start-emulator.sh kernel $IMG_FILE
 
-./mount-image.sh $IMG_FILE
-./prepare-image-for-deployment.sh $IMG_FILE
-./unmount-image.sh $IMG_FILE
+./mount-image.sh $IMG_FILE $IMG_DIR
+./prepare-image-for-deployment.sh $IMG_DIR
+./unload-init-scripts.sh $IMG_DIR
+./unmount-image.sh $IMG_DIR

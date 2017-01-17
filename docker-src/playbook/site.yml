@@ -1,0 +1,6 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+    - command: touch /home/pi/ansible.txt
+      check_mode: no

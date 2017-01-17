@@ -12,5 +12,3 @@ qemu-system-arm \
 	-drive "file=$IMG_FILE,index=0,media=disk,format=raw" \
 	-nographic \
 	-redir tcp:2222::22
-	#-net nic -net user,hostfwd=tcp::2222-:22,hostfwd=tcp::22280-:80
-#-append  "rw earlyprintk loglevel=8 console=ttyAMA0,115200 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2" \

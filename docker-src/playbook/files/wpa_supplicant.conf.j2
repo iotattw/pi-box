@@ -1,0 +1,4 @@
+country=AU
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+{{ wpa_supplicant_network_block.stdout | mandatory }}

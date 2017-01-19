@@ -1,4 +1,3 @@
 #!/bin/sh 
-ansible-playbook \
-	-e 'host_key_checking=false' \
-	-i playbook/hosts playbook/site.yml -vv
+ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+	-i playbook/hosts playbook/site.yml

@@ -1,6 +1,39 @@
 ---
 - hosts: all
+  vars:
+    wifi_network: wifi network
+    wifi_password: wifi password
+    pi_user_password: This is a default password; change it!
   gather_facts: no
   tasks:
-    - command: touch /home/pi/ansible.txt
-      check_mode: no
+
+    - name: Generate wpa_supplicant network block for {{wifi_network}}
+      command: 'wpa_passphrase ''{{wifi_network}}'' ''{{wifi_password}}'''
+      register: wpa_supplicant_network_block
+      changed_when: false
+
+    - name: Render wpa_supplicant configuration file
+      template:
+        src: files/wpa_supplicant.conf.j2
+        dest: /etc/wpa_supplicant/wpa_supplicant.conf
+      become: true
+
+    - name: Set localhost refence to {{ hostname }}
+      lineinfile:
+        dest: /etc/hosts
+        regexp: '^127\.0\.0\.1' 
+        line: '127.0.0.1	localhost {{ hostname }}'
+      become: true
+
+    - name: Set hostname to {{ hostname }}
+      shell: 'echo ''{{ hostname }}'' > /etc/hostname'
+      become: true
+
+    - name: Update pi user password
+      shell: 'echo ''pi:This is a default password; change it!'' | chpasswd'
+      become: true
+
+    - name: Install the package "avahi-daemon"
+      apt:
+        name: avahi-daemon
+        state: present

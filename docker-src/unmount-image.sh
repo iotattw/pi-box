@@ -1,4 +1,4 @@
 #!/bin/sh
-IMG_DIR=$1
+IMG_DIR=/mnt/raspbian
 
 umount $IMG_DIR

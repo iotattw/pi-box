@@ -10,3 +10,5 @@ connect:
 		docker exec -it ${IMAGE_NAME} /bin/bash
 rm:
 		docker rm -f `docker ps -aqf "name=${IMAGE_NAME}"`
+deploy:
+		sudo dd bs=4m if=docker-src/raspbian.img of=$(disk)

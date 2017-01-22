@@ -1,14 +1,14 @@
 ---
 - hosts: all
-  vars:
-    wifi_network: wifi network
-    wifi_password: wifi password
-    pi_user_password: This is a default password; change it!
   gather_facts: no
+  vars_files:
+    - wifi.yml
+    - pi_user.yml
+    - ssh_keys.yml
   tasks:
 
-    - name: Generate wpa_supplicant network block for {{wifi_network}}
-      command: 'wpa_passphrase ''{{wifi_network}}'' ''{{wifi_password}}'''
+    - name: Generate wpa_supplicant network block for {{wifi.network}}
+      command: 'wpa_passphrase ''{{wifi.network}}'' ''{{wifi.password}}'''
       register: wpa_supplicant_network_block
       changed_when: false
 
@@ -30,10 +30,18 @@
       become: true
 
     - name: Update pi user password
-      shell: 'echo ''pi:This is a default password; change it!'' | chpasswd'
+      shell: 'echo ''pi:{{ pi_user.password }}'' | chpasswd'
       become: true
 
     - name: Install the package "avahi-daemon"
       apt:
         name: avahi-daemon
         state: present
+
+    - name: Add SSH keys
+      authorized_key:
+        user: pi
+        key: '{{ item }}'
+        state: present
+      with_items: '{{ ssh_keys }}'
+      become: true

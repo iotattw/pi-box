@@ -11,5 +11,5 @@ sed -i "/ExecStart/s/\$TERM$/& --autologin pi/" $IMG_DIR/lib/systemd/system/seri
 
 if [ ! -f $HOME_DIR/.ssh/authorized_keys ]; then
 	mkdir -p $HOME_DIR/.ssh
-	cat /root/.ssh/id_rsa.pub >> $HOME_DIR/.ssh/authorized_keys
+	cat /root/.ssh/id_rsa.pub > $HOME_DIR/.ssh/authorized_keys
 fi

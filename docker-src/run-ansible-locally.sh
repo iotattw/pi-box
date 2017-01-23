@@ -5,7 +5,6 @@ spawn ./start-emulator.sh
 expect "pi@*:"
 send "sudo update-rc.d ssh enable; sudo service ssh start;\r"
 expect "pi@*:"
-spawn ./run-ansible.sh
-wait
+system ./run-ansible.sh
 send "sudo shutdown now\r"
 interact

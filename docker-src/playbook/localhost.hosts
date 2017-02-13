@@ -1,0 +1,1 @@
+localhost ansible_port=2222 ansible_user=pi deployed_pi=false hostname=machine-name

@@ -18,14 +18,14 @@
         dest: /etc/wpa_supplicant/wpa_supplicant.conf
       become: true
 
-    - name: Set localhost refence to {{ hostname }}
+    - name: Set localhost refence to new hostname
       lineinfile:
         dest: /etc/hosts
         regexp: '^127\.0\.0\.1' 
         line: '127.0.0.1	localhost {{ hostname }}'
       become: true
 
-    - name: Set hostname to {{ hostname }}
+    - name: Set hostname to new hostname
       shell: 'echo ''{{ hostname }}'' > /etc/hostname'
       become: true
 
@@ -44,4 +44,9 @@
         key: '{{ item }}'
         state: present
       with_items: '{{ ssh_keys }}'
+      become: true
+    
+    - name: Resize file system to fit SD card (deployed pi only)
+      command: 'resize2fs /dev/mmcblk0p2'
+      when: deployed_pi
       become: true

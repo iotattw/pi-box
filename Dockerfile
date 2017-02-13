@@ -5,4 +5,5 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
 	apt-get install -y qemu ansible expect && \
 	rm -rf /var/lib/apt/lists/* && \
 	ssh-keygen -q -t rsa -N "" -f /root/.ssh/id_rsa
-CMD cd /src && chmod u+x ./go.sh && ./go.sh
+WORKDIR /src
+CMD chmod u+x ./*.sh && ./go.sh

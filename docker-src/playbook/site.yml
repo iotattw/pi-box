@@ -21,7 +21,7 @@
     - name: Set localhost refence to new hostname
       lineinfile:
         dest: /etc/hosts
-        regexp: '^127\.0\.0\.1' 
+        regexp: '^127\.0\.0\.1'
         line: '127.0.0.1	localhost {{ hostname }}'
       become: true
 
@@ -37,6 +37,7 @@
       apt:
         name: avahi-daemon
         state: present
+      become: true
 
     - name: Add SSH keys
       authorized_key:
@@ -45,7 +46,7 @@
         state: present
       with_items: '{{ ssh_keys }}'
       become: true
-    
+
     - name: Resize file system to fit SD card (deployed pi only)
       command: 'resize2fs /dev/mmcblk0p2'
       when: deployed_pi

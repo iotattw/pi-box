@@ -1,2 +1,2 @@
-10.242.126.161 ansible_port=22 ansible_user=pi deployed_pi=true hostname=octavia
-10.242.126.162 ansible_port=22 ansible_user=pi deployed_pi=true hostname=brandywine
+octavia.local ansible_port=22 ansible_user=pi deployed_pi=true hostname=octavia
+brandywine.local ansible_port=22 ansible_user=pi deployed_pi=true hostname=brandywine

@@ -9,7 +9,7 @@ echo "KERNEL==\"sda2\", SYMLINK+=\"root\"" >> $IMG_DIR/etc/udev/rules.d/90-qemu.
 
 sed -i "/ExecStart/s/\$TERM$/& --autologin pi/" $IMG_DIR/lib/systemd/system/serial-getty\@.service
 
-if [ ! -f $HOME_DIR/.ssh/authorized_keys ]; then
+if [ ! -f $HOME_DIR/.ssh/authorized_keys ] || [ ! $(grep -q "$(cat /root/.ssh/id_rsa.pub)" $HOME_DIR/.ssh/authorized_keys) ]; then
 	mkdir -p $HOME_DIR/.ssh
-	cat /root/.ssh/id_rsa.pub > $HOME_DIR/.ssh/authorized_keys
+	cat /root/.ssh/id_rsa.pub >> $HOME_DIR/.ssh/authorized_keys
 fi

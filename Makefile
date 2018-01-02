@@ -10,4 +10,8 @@ run-network:
 rm:
 		docker rm -f `docker ps -aqf "name=${IMAGE_NAME}"`
 deploy:
-		sudo dd bs=4m if=docker-src/raspbian.img of=$(disk)
+		sudo dd bs=8m if=docker-src/raspbian.img of=$(disk)
+deploy-progress:
+		sudo kill -INFO $(pgrep ^dd)
+retrieve:
+		sudo dd bs=8m if=$(disk) of=docker-src/retrieved.img 

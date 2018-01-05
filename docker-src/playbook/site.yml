@@ -33,10 +33,42 @@
       shell: 'echo ''pi:{{ pi_user.password }}'' | chpasswd'
       become: true
 
-    - name: Install the package "avahi-daemon"
+    - name: Remove packages
       apt:
-        name: avahi-daemon
+        name: "{{item}}"
+        state: absent
+      become: true
+      with_items:
+        - default-jre
+        - default-jre-headless
+        - openjdk-7-jre
+        - openjdk-7-jre-headless
+
+    - name: Install packages
+      apt:
+        name: "{{item}}"
         state: present
+      become: true
+      with_items:
+        - oracle-java8-jdk
+        - avahi-daemon
+        - toilet
+
+    - name: Copy font for MOTD
+      copy:
+        src: files/doom.flf
+        dest: /usr/share/figlet/
+        owner: root
+        group: root
+        mode: 0644
+      become: true
+
+    - name: Set MOTD to ASCII art of hostname
+      shell: 'echo ''{{ hostname }}'' | tr a-z A-Z | toilet --font doom > /etc/motd'
+      become: true
+
+    - name: Enable MOTD on SSH login
+      shell: sed -i '/PrintMotd/ c\PrintMotd yes ' /etc/ssh/sshd_config
       become: true
 
     - name: Add SSH keys

@@ -1,6 +1,7 @@
 #!/bin/sh
 qemu-system-arm \
-	-kernel kernel \
+	-kernel kernel-qemu-4.19.50-buster \
+	-dtb versatile-pb.dtb \
 	-cpu arm1176 \
 	-m 256 \
 	-M versatilepb \

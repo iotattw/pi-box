@@ -35,25 +35,28 @@
 
     - name: Remove packages
       apt:
-        name: "{{item}}"
+        name: ['default-jre', 'default-jre-headless', 'openjdk-7-jre', 'openjdk-7-jre-headless']
         state: absent
       become: true
-      with_items:
-        - default-jre
-        - default-jre-headless
-        - openjdk-7-jre
-        - openjdk-7-jre-headless
 
+    - name: Add repositories
+      apt_repository:
+        repo: deb http://ftp.debian.org/debian buster-backports main
+        state: absent
+      become: true
+    # - name: Get GPG keys for repositories
+    #   shell: |
+    #     gpg --keyserver pgp.mit.edu --recv-keys 7638D0442B90D010 8B48AD6246925553
+    #     gpg --armor --export 7638D0442B90D010 | apt-key add -
+    #     gpg --armor --export 8B48AD6246925553 | apt-key add -
+    #   become: true
     - name: Install packages
       apt:
-        name: "{{item}}"
+        name: ['software-properties-common', 'git', 'avahi-daemon', 'nginx', 'toilet', 'python3', 'python3-venv', 'python3-pip', 'python-certbot-nginx']
         state: present
+        update_cache: yes
       become: true
-      with_items:
-        - oracle-java8-jdk
-        - avahi-daemon
-        - toilet
-
+      # Needed an override to remove the ipv6 listener in /etc/nginx/sites-enabled/default
     - name: Copy font for MOTD
       copy:
         src: files/doom.flf
@@ -65,10 +68,6 @@
 
     - name: Set MOTD to ASCII art of hostname
       shell: 'echo ''{{ hostname }}'' | tr a-z A-Z | toilet --font doom > /etc/motd'
-      become: true
-
-    - name: Enable MOTD on SSH login
-      shell: sed -i '/PrintMotd/ c\PrintMotd yes ' /etc/ssh/sshd_config
       become: true
 
     - name: Add SSH keys
@@ -83,3 +82,8 @@
       command: 'resize2fs /dev/mmcblk0p2'
       when: deployed_pi
       become: true
+# Home Assistant
+# NGINX configuration
+# Afraid.org DNS config
+# LetsEncrypt daemon
+# Sinclairstudios.net website?

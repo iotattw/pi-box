@@ -1,4 +1,6 @@
 docker-src/kernel
 docker-src/raspbian.img
-docker-src/playbook/site.retry
 .DS_Store
+*.retry
+*.zip
+.vscode

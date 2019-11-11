@@ -1,0 +1,51 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: Install packages
+      apt:
+        name: [nodejs, npm, git, make, g++, gcc,]
+        state: present
+        update_cache: yes
+      become: true
+    - name: Get Zigbee2MQTT
+      git:
+        repo: https://github.com/Koenkk/zigbee2mqtt.git 
+        dest: /opt/zigbee2mqtt
+        update: no
+      become: true
+    - name: Set ownership of /opt/zigbee2mqtt to Pi user
+      file:
+        path: /opt/zigbee2mqtt
+        state: directory
+        mode: '0755'
+        recurse: true
+        owner: pi
+        group: pi
+      become: true
+    - name: Install packages used by Zigbee2MQTT
+      npm:
+        path: /opt/zigbee2mqtt
+        state: present
+    - name: Copy zigbee2mqtt conf
+      copy:
+        src: files/zigbee2mqtt.conf
+        dest: /opt/zigbee2mqtt/data/configuration.yaml
+        owner: pi
+        group: pi
+        mode: '0644'
+      become: true
+    - name: Copy systemd task for zigbee2mqtt
+      copy:
+        src: files/zigbee2mqtt@pi.service
+        dest: /etc/systemd/system/
+        owner: root
+        group: root
+        mode: '0644'
+      become: true
+    - name: Start zigbee2mqtt service
+      systemd:
+        name: zigbee2mqtt@pi
+        enabled: yes
+        state: started
+      become: true

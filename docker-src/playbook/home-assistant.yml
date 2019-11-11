@@ -1,0 +1,83 @@
+---
+- hosts: all
+  gather_facts: no
+  vars_files:
+  - pi_user.yml
+  tasks:
+    - name: Install packages
+      apt:
+        name: [python3, python3-dev, python3-venv, python3-pip, libjpeg-dev, libffi-dev, libssl-dev, certbot, python-certbot-nginx]
+        state: present
+        update_cache: yes
+      become: true
+    - name: Add Home Assistant user
+      user:
+        append: yes
+        groups: [dialout, gpio, i2c]
+        name: homeassistant
+        system: yes
+      become: true
+    - name: Add Home Assistant folder
+      file:
+        path: /srv/homeassistant
+        state: directory
+        mode: '0755'
+        owner: homeassistant
+        group: homeassistant
+      become: true
+    # https://stackoverflow.com/questions/47873671/becoming-non-root-user-in-ansible-fails
+    - name: Install homeassistant in virtual python environment
+      shell: |
+        python3 -m venv .
+        source bin/activate
+        python3 -m pip install wheel
+        pip3 install homeassistant home-assistant-frontend
+      args:
+        creates: /srv/homeassistant/pyvenv.cfg
+        executable: /bin/bash
+        chdir: /srv/homeassistant
+      become: yes
+    - name: Set ownership of /srv/homeassistant to Home Assistant user
+      file:
+        path: /srv/homeassistant
+        state: directory
+        mode: '0755'
+        recurse: true
+        owner: homeassistant
+        group: homeassistant
+      become: true
+    - name: Copy systemd homeassistant
+      copy:
+        src: files/homeassistant@homeassistant.service
+        dest: /etc/systemd/system/
+        owner: root
+        group: root
+        mode: '0644'
+      become: true
+    - name: Start homeassistant service
+      systemd:
+        name: homeassistant@homeassistant
+        enabled: yes
+        state: started
+      become: true
+    - name: Enable hash bucket
+      lineinfile:
+        dest: /etc/nginx/nginx.conf
+        regexp: server_names_hash_bucket_size
+        line: 'server_names_hash_bucket_size 64;'
+      become: true
+    - name: Render web proxy
+      template:
+        src: files/nginx-server-block.j2
+        dest: /etc/nginx/sites-available/{{ webhost }}
+      become: true
+    - name: Activate web proxy
+      file:
+        src: /etc/nginx/sites-available/{{ webhost }}
+        dest: /etc/nginx/sites-enabled/{{ webhost }}
+        owner: root
+        group: root
+        state: link
+      become: true
+    - name: Setup certbot
+      command: sudo certbot --nginx -n --agree-tos --email {{ pi_user.email }} -d {{ webhost }}

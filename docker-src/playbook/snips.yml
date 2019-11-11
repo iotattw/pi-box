@@ -1,0 +1,35 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+
+    - name: Add repo key
+      apt_key:
+        url: https://raspbian.snips.ai/531DD1A7B702B14D.pub
+        state: present
+      become: true
+
+    - name: Add repositories
+      apt_repository:
+        repo: deb https://raspbian.snips.ai/stretch stable main
+        state: present
+      become: true
+    
+    - name: Install packages
+      apt:
+        name: [dirmngr, snips-platform-voice, snips-template, snips-skill-server, snips-watch, snips-platform-demo]
+        state: present
+        update_cache: yes
+      become: true
+
+    - name: Copy audio device configuration
+      copy:
+        src: files/asound.conf
+        dest: /etc
+        owner: root
+        group: root
+        mode: 0644
+      become: true
+
+    - name: Set output volume
+      command: 'amixer sset ''PCM'',0 0dB'

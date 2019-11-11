@@ -80,7 +80,7 @@
 
     - name: Resize file system to fit SD card (deployed pi only)
       command: 'resize2fs /dev/mmcblk0p2'
-      when: deployed_pi
+      when: deployed_pi | true
       become: true
 # Home Assistant
 # NGINX configuration
